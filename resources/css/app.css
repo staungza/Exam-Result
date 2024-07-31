@@ -1,0 +1,8 @@
+/* Add this to your application's CSS file */
+.pass {
+    color: green;
+}
+
+.fail {
+    color: red;
+}
