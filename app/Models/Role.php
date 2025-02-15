@@ -17,10 +17,16 @@ class Role extends Model
         'slug',
     ];
 
+    protected $casts = [
+        'name' => 'json',
+        'permissions' => 'json',
+    ];
     public function users(){
 
         return $this->belongsToMany(User::class);
         
     }
+
+    
 
 }

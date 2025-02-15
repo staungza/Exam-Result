@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+
 use Filament\Forms;
 use App\Models\City;
 use Filament\Tables;
@@ -14,10 +15,12 @@ use Filament\Forms\Get;
 use App\Models\Township;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Traits\CheckPermission;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\EditAction;
@@ -38,54 +41,58 @@ use App\Filament\Resources\StudentResource\Pages\CreateStudent;
 
 class StudentResource extends Resource
 {
+    use CheckPermission;
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationGroup = 'Student Info';
 
+    protected static array $permissions = [
+        'student-view',
+        'student-edit',
+        'student-create'
+    ];
     public static function getNavigationBadge(): ?string{
         return static::$model::count();
     }
+    
     public static function form(Form $form): Form
     {
         return $form
        
             ->schema([
-                Forms\Components\Section::make('Student Info')
-
+            Section::make('Student Info')
                 ->schema([
-                    Forms\Components\TextInput::make('roll_no')
+            TextInput::make('roll_no')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('student_name')
+            TextInput::make('student_name')
                     ->required()
                     ->maxLength(255),
-                    Forms\Components\Select::make('major')
+            Select::make('major')
                     ->options([
                         'bio'=>'Biological',
                         'eco'=>'Ecomonics',
 
                     ]),
-                  
-                   
                     
-                Forms\Components\TextInput::make('father_name')
+            TextInput::make('father_name')
                     ->required()
                     ->maxLength(255),
                    
                 ])->columns(2),
 
-                Forms\Components\Section::make('Address')
+            Section::make('Address')
 
                 ->schema([
-                Forms\Components\Select::make('region_id')
+            Select::make('region_id')
                 ->relationship(name:'region',titleAttribute:'name')
                 ->searchable()
                 ->preload()
                 ->live()
                 ->required(),
 
-                    Forms\Components\Select::make('township_id')
+            Select::make('township_id')
                     ->label('Township')
                     ->options(fn (Get $get): Collection => Township::query()
                        ->where('region_id', $get('region_id'))
@@ -97,7 +104,7 @@ class StudentResource extends Resource
 
                    
                 ])->columns(2),
-                Forms\Components\Section::make('Dates')
+            Section::make('Dates')
                 ->schema([
                     Forms\Components\DatePicker::make('date_of_birth')
                     ->required(),
@@ -181,4 +188,6 @@ class StudentResource extends Resource
             'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
+
+    
 }
