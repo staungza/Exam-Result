@@ -42,7 +42,7 @@ use App\Filament\Resources\StudentResource\Pages\CreateStudent;
 
 class StudentResource extends Resource
 {
-    use CheckPermission;
+    // use CheckPermission;
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';

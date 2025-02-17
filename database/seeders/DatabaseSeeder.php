@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RegionSeeder::class);
         $this->call(LocationSeeder::class);
         $this->call(TownshipSeeder::class);
-        $this->call(QuarterSeeder::class);
+        // $this->call(QuarterSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(StudentSeeder::class);
         $this->call(ResultSeeder::class);

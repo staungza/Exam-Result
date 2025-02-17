@@ -18,11 +18,19 @@ class ResultFactory extends Factory
      */
     public function definition(): array
     {
+        // $student = Student::query()
+        //     ->whereDoesntHave('results')  
+        //     ->inRandomOrder()
+        //     ->first();
+
+        $existingRollNos = Result::query()->pluck('roll_no')->toArray();
+
+        // Fetch a random student who doesn't have a result (i.e., their roll_no is not in the results table)
         $student = Student::query()
-            ->whereDoesntHave('results')  // Ensure the student doesn't already have a result
+            ->whereNotIn('roll_no', $existingRollNos)  // Exclude roll_no values that already exist in results
             ->inRandomOrder()
             ->first();
-
+            
         if (!$student) {
             throw new \Exception("No students found for the result factory.");
         }

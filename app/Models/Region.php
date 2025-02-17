@@ -17,7 +17,7 @@ class Region extends Model
    
 
 
-    public function township(): HasMany
+    public function townships(): HasMany
     {
         return $this->hasMany(Township::class);
     }
