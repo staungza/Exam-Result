@@ -28,13 +28,10 @@ class Result extends Model
         'passorfail'
     ];
 
-   
-    
-   
-    public function students(): BelongsTo
-    {
-         return $this->belongsTo(Student::class, 'roll_no');
-    }
+     public function students()
+     {
+     return $this->belongsTo(Student::class, 'roll_no', 'roll_no');
+     }
 
     public function region(): hasMany
     {

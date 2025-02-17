@@ -14,40 +14,39 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
-    use HasFactory;
-    protected $fillable=[
-     'roll_no',
-     'student_name',
-     'father_name',
-     'major',
-     'region_id',
-     'township_id',
-     'quarter_id',
-     'date_of_birth'
-       
-    ];
+     use HasFactory;
+     protected $fillable = [
+          'roll_no',
+          'student_name',
+          'father_name',
+          'major',
+          'region_id',
+          'township_id',
+          'quarter_id',
+          'date_of_birth'
 
-    protected $guardded=[];
-    public function region(): BelongsTo
-    {
-         return $this->belongsTo(Region::class);
-    }
+     ];
 
-    public function township(): BelongsTo
-    {
-         return $this->belongsTo(Township::class);
-    }
+     protected $guardded = [];
+     public function region(): BelongsTo
+     {
+          return $this->belongsTo(Region::class);
+     }
 
-    public function quarter(): BelongsTo
-    {
-         return $this->belongsTo(Quarter::class);
-    }
+     public function township(): BelongsTo
+     {
+          return $this->belongsTo(Township::class);
+     }
 
-    public function results() : HasMany
-    {
-        return $this->hasMany(Result::class, 'roll_no', 'roll_no');
-    }
+     public function quarter(): BelongsTo
+     {
+          return $this->belongsTo(Quarter::class);
+     }
+     public function results()
+     {
+          return $this->hasMany(Result::class, 'roll_no', 'roll_no');
+     }
 
-   
+
 
 }

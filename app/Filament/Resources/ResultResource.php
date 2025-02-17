@@ -57,6 +57,10 @@ class ResultResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-cube';
     protected static ?string $navigationGroup = 'Student Info';
 
+    public static function getNavigationBadge(): ?string{
+        return static::$model::count();
+    }
+    
     public function chart(): array
     {
         $regions = Region::all();

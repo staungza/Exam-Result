@@ -21,6 +21,7 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\EditAction;
@@ -52,10 +53,19 @@ class StudentResource extends Resource
         'student-edit',
         'student-create'
     ];
+
+    
+
     public static function getNavigationBadge(): ?string{
         return static::$model::count();
     }
     
+    public static function canView($record): bool
+    {
+        // Check if the user has the 'student-view' permission
+        return Gate::allows('student-view');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
