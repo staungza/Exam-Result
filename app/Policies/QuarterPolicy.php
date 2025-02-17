@@ -11,10 +11,10 @@ class QuarterPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Quarter');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Quarter');
+    }
 
     /**
      * Determine whether the user can view the model.

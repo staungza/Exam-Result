@@ -11,10 +11,10 @@ class LocationPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Location');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Location');
+    }
 
     /**
      * Determine whether the user can view the model.

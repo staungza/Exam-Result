@@ -11,10 +11,10 @@ class RegionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Region');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Region');
+    }
 
     /**
      * Determine whether the user can view the model.

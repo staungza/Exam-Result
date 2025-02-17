@@ -11,10 +11,10 @@ class PermissionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Permission');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Permission');
+    }
 
     /**
      * Determine whether the user can view the model.

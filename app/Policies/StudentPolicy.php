@@ -11,10 +11,10 @@ class StudentPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Student');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Student');
+    }
 
     /**
      * Determine whether the user can view the model.

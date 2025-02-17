@@ -11,10 +11,10 @@ class ProfilePolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Profile');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Profile');
+    }
 
     /**
      * Determine whether the user can view the model.

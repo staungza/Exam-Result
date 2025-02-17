@@ -11,10 +11,10 @@ class ResultPolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     return $user->checkPermissionTo('view-any Result');
-    // }
+    public function viewAny(User $user): bool
+    {
+        return $user->checkPermissionTo('view-any Result');
+    }
 
     /**
      * Determine whether the user can view the model.
