@@ -1,23 +1,16 @@
 <?php
-
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
-use App\Traits\HasRoleAndPermission;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Testing\Fluent\Concerns\Has;
-use Spatie\Permission\Traits\HasRoles;
-
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -50,50 +43,62 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function role()
+    /**
+     * Get the roles associated with the user.
+     */
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class);
     }
 
+    /**
+     * Get the permissions from all the user's roles.
+     *
+     * @return \Illuminate\Support\Collection
+     */
     public function permissions()
     {
-        return $this->belongsToMany(Permission::class);
+        // Get all roles associated with the user
+        $roles = $this->roles;
+
+        // Use flatMap to merge all the permissions stored as JSON in each role
+        return $roles->flatMap(function ($role) {
+        
+            $permissions = json_decode($role->permissions, true);
+
+            return $permissions;
+        })->unique(); // Remove duplicate permissions
     }
 
-    public function checkPermissionTo($permission)
+    /**
+     * Check if the user has any of the given permissions.
+     *
+     * @param  array  $permissions
+     * @return bool
+     */
+    public function hasAnyPermissions(array $permissions)
     {
-        // dd($this->permissions->contains('name', $permission));
-        if ($this->permissions && $this->permissions->contains('name', $permission)) {
-            return true;
-        }
-        return false;
+        
+        $userPermissions = $this->permissions();
+
+        dd($userPermissions);
+
+        return collect($permissions)->some(function ($permission) use ($userPermissions) {
+            return $userPermissions->contains($permission);
+        });
     }
 
-//     public function checkPermissionTo($permission)
-// {
-//     $user = Auth::user();
-    
-//     // Ensure that $user->role->permissions is a collection, not a string
-//     $permissions = $user->role->permissions;
+    /**
+     * Check if the user has a specific permission.
+     *
+     * @param  string  $slug
+     * @return bool
+     */
+    public function checkPermissionTo($slug)
+    {
+        $userPermissions = $this->permissions();
 
-//     // Check if it's a collection (an Eloquent Collection)
-//     if ($permissions instanceof \Illuminate\Database\Eloquent\Collection) {
-//         // Clean the permission names by removing square brackets and quotes
-//         $cleanedPermissions = $permissions->map(function($perm) {
-//             return str_replace(['[', ']', '"'], '', $perm->name);
-//         });
-
-//         // Now check if the user has the permission
-//         if ($cleanedPermissions->contains($permission)) {
-//             return response()->json(['message' => 'User has permission!']);
-//         } else {
-//             return response()->json(['message' => 'User does not have permission.']);
-//         }
-//     } else {
-//         // If permissions isn't a collection, handle the error
-//         return response()->json(['message' => 'Invalid permission data.']);
-//     }
-// }
-
-    
+        // dd($userPermissions);
+        return $userPermissions->contains($slug);
+    }
 }

@@ -33,15 +33,15 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                
+
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->maxLength(255),
-                
+
                 Forms\Components\TextInput::make('password')
                     ->required()
                     ->maxLength(255),
-                
+
                 // Permissions field with CheckboxList
                 CheckboxList::make('permissions')
                     ->label('Permissions')
@@ -61,12 +61,15 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable(),
-                
+
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('role')
+                    ->getStateUsing(function ($record) {
+                        return $record->role->name ?? '';
+                    })
                     ->label('Role')
                     ->searchable(),
             ])
@@ -83,12 +86,25 @@ class UserResource extends Resource
             ]);
     }
 
+    public static function afterSave($record, $form): void
+    {
+        // Check if the form has a 'permissions' field and if the user is a valid record
+        if ($record instanceof User && $form->getState()) {
+            // Get the selected permission IDs
+            $permissions = $form->getState()['permissions'] ?? [];
+
+            dd($permissions);
+            // Sync the selected permissions with the permission_user pivot table
+            $record->permissions()->sync($permissions);
+        }
+    }
+
     // Handle syncing permissions after form is submitted
     public static function afterFormSubmit($form, $record): void
     {
         // $form contains the form data
         $permissions = $form->getState()['permissions'] ?? [];
-        
+
         // Sync permissions after the form is submitted
         if ($record instanceof User) {
             $record->permissions()->sync($permissions);  // Sync the selected permissions

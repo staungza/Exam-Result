@@ -27,4 +27,9 @@ class Role extends Model
         
     }
 
+    public function checkPermissionTo($slug)
+    {
+        dd($this->permissions);
+        return in_array($slug, $this->permissions);
+    }
 }
