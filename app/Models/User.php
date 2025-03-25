@@ -2,11 +2,12 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+      
     ];
 
     /**
@@ -55,21 +57,23 @@ class User extends Authenticatable
      * Get the permissions from all the user's roles.
      *
      * @return \Illuminate\Support\Collection
-     */
-    public function permissions()
-    {
-        // Get all roles associated with the user
-        $roles = $this->roles;
-
-        // Use flatMap to merge all the permissions stored as JSON in each role
-        return $roles->flatMap(function ($role) {
-        
-            $permissions = json_decode($role->permissions, true);
-
-            return $permissions;
-        })->unique(); // Remove duplicate permissions
+     */public function permissions()
+{
+    // Check if the user has the super-admin role
+    if ($this->roles->contains('slug', 'super-admin')) {
+        // Fetch all permissions from the permissions table
+        return DB::table('permissions')->pluck('name');
     }
 
+    // Get all roles associated with the user
+    $roles = $this->roles;
+
+    // Use flatMap to merge all the permissions stored as JSON in each role
+    return $roles->flatMap(function ($role) {
+        $permissions = json_decode($role->permissions, true);
+        return $permissions;
+    })->unique(); // Remove duplicate permissions
+}
     /**
      * Check if the user has any of the given permissions.
      *
@@ -81,7 +85,7 @@ class User extends Authenticatable
         
         $userPermissions = $this->permissions();
 
-        dd($userPermissions);
+        // dd($userPermissions);
 
         return collect($permissions)->some(function ($permission) use ($userPermissions) {
             return $userPermissions->contains($permission);

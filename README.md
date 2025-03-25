@@ -5,3 +5,5 @@
 # db:seed
 
 # php artisan permissions:sync
+
+# php artisan roles:sync
