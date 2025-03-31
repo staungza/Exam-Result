@@ -25,7 +25,7 @@ class ProfileResource extends Resource
     {
         return $form
             ->schema([
-                //
+            
             ]);
     }
 
@@ -33,20 +33,45 @@ class ProfileResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Full Name')
+                    ->sortable()
+                    ->searchable(),
+                
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email Address')
+                    ->sortable()
+                    ->searchable(),
+                
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Role')
+                    ->sortable(),
+                
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->date()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                // Add any filters you want (e.g., filter by role)
+                Tables\Filters\SelectFilter::make('role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'user' => 'User',
+                    ])
+                    ->label('Role'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),  // Allow users to edit profiles
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\BulkAction::make('delete')
+                    ->label('Delete Selected')
+                    ->action(fn (array $records) => Profile::destroy(collect($records)->pluck('id')))
+                    ->icon('heroicon-o-trash'),
             ]);
     }
+    
 
     public static function getRelations(): array
     {
